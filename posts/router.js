@@ -23,6 +23,31 @@ router.post('/', (req, res) => {
 });
 
 /**
+ * Create comment
+ */
+router.post('/:id/comments', (req, res) => {
+    const { id: post_id } = req.params;
+    const comment = { ...req.body, post_id };
+
+    if(!comment.text) {
+        res.status(400).json({ error: "Please provide text for the comment." });
+    }
+    else {
+        DB.insertComment(comment).then(inserted => {
+            if(!inserted) {
+                res.status(404).json({ message: "The post with the specified ID does not exist." });
+            }
+            else{
+                res.status(201).json(inserted);
+            }
+        }).catch(err => {
+            console.log(err);
+            res.status(500).json({ error: "There was an error while saving the comment to the database" });
+        });
+    }
+}); 
+
+/**
  * GET posts
  */
 router.get('/', (req, res) => {
