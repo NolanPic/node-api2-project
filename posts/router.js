@@ -4,6 +4,25 @@ const DB = require('../data/db');
 const router = express.Router();
 
 /**
+ * Create post
+ */
+router.post('/', (req, res) => {
+    const post = req.body;
+
+    if(!post.title || !post.contents) {
+        res.status(400).json({ error: "Please provide title and contents for the post." });
+    }
+    else {
+        DB.insert(post).then(inserted => {
+            res.status(201).json(inserted);
+        }).catch(err => {
+            console.log(err);
+            res.status(500).json({ error: "There was an error while saving the post to the database" });
+        });
+    }
+});
+
+/**
  * GET posts
  */
 router.get('/', (req, res) => {
